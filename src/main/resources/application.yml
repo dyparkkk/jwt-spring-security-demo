@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/jwtDemo
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2.console:
+    enabled: true
+    path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  output.ansi.enabled: always  # terminal color
+
+  redis:
+    host: localhost
+    port: 6379
+
+jwt:
+  secret-key: secret-key-lalala-lululu-fucking-error-WeakKeyException-not-secure-enough
+  token-validity-in-sec: 10 # 1??
+  refresh-token-validity-in-sec: 604800  # ???

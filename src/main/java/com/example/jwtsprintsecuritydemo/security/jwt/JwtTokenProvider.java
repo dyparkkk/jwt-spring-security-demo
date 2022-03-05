@@ -51,16 +51,12 @@ public class JwtTokenProvider implements InitializingBean {
     }
 
     public String createAccessToken(Authentication authentication) {
-//        String authorities = authentication.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority) // grantedAuthority -> grantedAuthority.getAuthority()
-//                .collect(Collectors.joining()); // joining ??
         Date now = new Date();
         Date validity = new Date(now.getTime() + tokenValidityInMs);
 
         return Jwts.builder()
-                .setSubject(authentication.getName()) //
+                .setSubject(authentication.getName())
                 .setIssuedAt(now) // 발행시간
-//                .claim(AUTHORITIES_KEY, authorities) // 권한
                 .signWith(key, SignatureAlgorithm.HS512) // 암호화
                 .setExpiration(validity) // 만료
                 .compact();
@@ -82,7 +78,7 @@ public class JwtTokenProvider implements InitializingBean {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return JwtCode.ACCESS;
         } catch (ExpiredJwtException e){
-            // refresh token 확인 작업
+            // 만료된 경우에는 refresh token을 확인하기 위해
             return JwtCode.EXPIRED;
         } catch (JwtException | IllegalArgumentException e) {
             log.info("jwtException : {}", e);
@@ -112,14 +108,13 @@ public class JwtTokenProvider implements InitializingBean {
     @Transactional
     public String issueRefreshToken(Authentication authentication){
         String newRefreshToken = createRefreshToken(authentication);
-//        RefreshToken token = RefreshToken.createToken(authentication.getName(), newRefreshToken);
-//        refreshTokenRepository.save(token);
+
         // 기존것이 있다면 바꿔주고, 없다면 만들어줌
         refreshTokenRepository.findByUserId(authentication.getName())
                 .ifPresentOrElse(
                         r-> {r.changeToken(newRefreshToken);
-                            log.info("issueRefreshToken method | change token ");
-                        },
+        log.info("issueRefreshToken method | change token ");
+                                            },
                         () -> {
                             RefreshToken token = RefreshToken.createToken(authentication.getName(), newRefreshToken);
                             log.info(" issueRefreshToken method | save tokenID : {}, token : {}", token.getUserId(), token.getToken());

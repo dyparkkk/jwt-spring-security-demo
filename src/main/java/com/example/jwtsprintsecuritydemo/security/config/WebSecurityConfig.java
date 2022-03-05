@@ -51,12 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/auth/**").authenticated()
                 .anyRequest().permitAll();
-//        http.formLogin()
-//                .loginPage("/login")
-//                .successForwardUrl("/");
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
-
     }
 
     @Bean
@@ -64,9 +60,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+//    @Override
+//    @Bean
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
 }

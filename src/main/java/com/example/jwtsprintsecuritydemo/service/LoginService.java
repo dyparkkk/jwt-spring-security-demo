@@ -1,6 +1,6 @@
 package com.example.jwtsprintsecuritydemo.service;
 
-import com.example.jwtsprintsecuritydemo.controller.dto.SignInResponseDto;
+import com.example.jwtsprintsecuritydemo.api.dto.SignInResponseDto;
 import com.example.jwtsprintsecuritydemo.domain.Member;
 import com.example.jwtsprintsecuritydemo.repository.MemberRepository;
 import com.example.jwtsprintsecuritydemo.repository.RefreshTokenRepository;

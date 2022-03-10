@@ -113,8 +113,7 @@ public class JwtTokenProvider implements InitializingBean {
         refreshTokenRepository.findByUserId(authentication.getName())
                 .ifPresentOrElse(
                         r-> {r.changeToken(newRefreshToken);
-        log.info("issueRefreshToken method | change token ");
-                                            },
+                            log.info("issueRefreshToken method | change token ");},
                         () -> {
                             RefreshToken token = RefreshToken.createToken(authentication.getName(), newRefreshToken);
                             log.info(" issueRefreshToken method | save tokenID : {}, token : {}", token.getUserId(), token.getToken());

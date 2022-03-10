@@ -1,4 +1,4 @@
-package com.example.jwtsprintsecuritydemo.controller.dto;
+package com.example.jwtsprintsecuritydemo.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

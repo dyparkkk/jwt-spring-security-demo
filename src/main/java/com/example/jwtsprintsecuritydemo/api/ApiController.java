@@ -1,6 +1,6 @@
-package com.example.jwtsprintsecuritydemo.controller;
+package com.example.jwtsprintsecuritydemo.api;
 
-import com.example.jwtsprintsecuritydemo.controller.dto.SignInResponseDto;
+import com.example.jwtsprintsecuritydemo.api.dto.SignInResponseDto;
 import com.example.jwtsprintsecuritydemo.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

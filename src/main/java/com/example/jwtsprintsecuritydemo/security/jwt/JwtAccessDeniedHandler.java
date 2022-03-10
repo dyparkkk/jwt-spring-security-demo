@@ -20,6 +20,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
         // 403 발생시 에러 처리
+        log.info("403 handling ...");
         response.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
     }
 }

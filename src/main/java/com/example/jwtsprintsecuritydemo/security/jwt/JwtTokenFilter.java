@@ -1,5 +1,7 @@
 package com.example.jwtsprintsecuritydemo.security.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,29 +32,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = resolveToken(request, AUTHORIZATION_HEADER);
 
-        if (jwt != null && jwtTokenProvider.validateToken(jwt)== JwtCode.ACCESS) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("set Authentication to security context for '{}', uri: {}", authentication.getName(), request.getRequestURI());
-        }
-        else if( jwt != null && jwtTokenProvider.validateToken(jwt) == JwtCode.EXPIRED){
-            String refresh = resolveToken(request, REFRESH_HEADER);
-            // refresh token을 확인해서 재발급해준다
-            if(refresh != null && jwtTokenProvider.validateToken(refresh) == JwtCode.ACCESS){
-                String newRefresh = jwtTokenProvider.reissueRefreshToken(refresh);
-                if(newRefresh != null){
-                    response.setHeader(REFRESH_HEADER, "Bearer-"+newRefresh);
-
-                    // access token 생성
-                    Authentication authentication = jwtTokenProvider.getAuthentication(refresh);
-                    response.setHeader(AUTHORIZATION_HEADER, "Bearer-"+jwtTokenProvider.createAccessToken(authentication));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    log.info("reissue refresh Token & access Token");
-                }
+        try{
+            if ( jwt != null && jwtTokenProvider.validateToken(jwt)) {
+                Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("set Authentication to security context for '{}', uri: {}", authentication.getName(), request.getRequestURI());
             }
-        }
-        else {
-            log.info("no valid JWT token found, uri: {}", request.getRequestURI());
+        } catch(ExpiredJwtException e){
+            request.setAttribute("exception", e);
+            log.info("ExpiredJwtException {}", e.getMessage());
+        } catch(JwtException | IllegalArgumentException e){
+            request.setAttribute("exception", e);
+            log.info("jwtException {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

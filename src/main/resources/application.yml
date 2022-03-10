@@ -25,5 +25,5 @@ spring:
 
 jwt:
   secret-key: secret-key-lalala-lululu-fucking-error-WeakKeyException-not-secure-enough
-  token-validity-in-sec: 10 # 1??
+  token-validity-in-sec: 1 # 1??
   refresh-token-validity-in-sec: 604800  # ???

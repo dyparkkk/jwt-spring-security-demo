@@ -73,17 +73,17 @@ public class JwtTokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
-    public JwtCode validateToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return JwtCode.ACCESS;
+            return true;
         } catch (ExpiredJwtException e){
             // 만료된 경우에는 refresh token을 확인하기 위해
-            return JwtCode.EXPIRED;
+            throw e;
         } catch (JwtException | IllegalArgumentException e) {
             log.info("jwtException : {}", e);
         }
-        return JwtCode.DENIED;
+        return false;
     }
 
     @Transactional

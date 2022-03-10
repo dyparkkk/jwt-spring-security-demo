@@ -1,6 +1,7 @@
 package com.example.jwtsprintsecuritydemo.security.config;
 
 import com.example.jwtsprintsecuritydemo.security.jwt.JwtAccessDeniedHandler;
+import com.example.jwtsprintsecuritydemo.security.jwt.JwtAuthenticationEntryPoint;
 import com.example.jwtsprintsecuritydemo.security.jwt.JwtTokenFilterConfigurer;
 import com.example.jwtsprintsecuritydemo.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -39,20 +41,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http
+                .csrf().disable()
 
-        //session 사용 안함
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                //session 사용 안함
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-        http.exceptionHandling()
-                .accessDeniedHandler(jwtAccessDeniedHandler);
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
 
-        http.authorizeRequests()
+
+                .and()
+                .authorizeRequests()
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/auth/**").authenticated()
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
 
-        http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
+                .and()
+                .apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
+
     }
 
     @Bean
@@ -60,9 +69,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-//    @Override
-//    @Bean
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        return super.authenticationManagerBean();
-//    }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 }

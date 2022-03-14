@@ -3,11 +3,12 @@ package com.example.jwtsprintsecuritydemo.service;
 import com.example.jwtsprintsecuritydemo.api.dto.TokenResponseDto;
 import com.example.jwtsprintsecuritydemo.domain.Member;
 import com.example.jwtsprintsecuritydemo.domain.RefreshToken;
+import com.example.jwtsprintsecuritydemo.redis.RefreshRedisRepository;
+import com.example.jwtsprintsecuritydemo.redis.RefreshRedisToken;
 import com.example.jwtsprintsecuritydemo.repository.MemberRepository;
 import com.example.jwtsprintsecuritydemo.repository.RefreshTokenRepository;
 import com.example.jwtsprintsecuritydemo.security.MyUserDetailsService;
 import com.example.jwtsprintsecuritydemo.security.jwt.JwtTokenProvider;
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,9 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -30,7 +28,7 @@ public class LoginService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final MyUserDetailsService myUserDetailsService;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshRedisRepository refreshRedisRepository;
 
     @Transactional
     public Long signUp(String userId, String pw){ // 회원가입
@@ -56,14 +54,10 @@ public class LoginService {
 
         // refresh token 발급 및 저장
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
-        RefreshToken token = RefreshToken.createToken(userId, refreshToken);
+        RefreshRedisToken token = RefreshRedisToken.createToken(userId, refreshToken);
 
-        // 기존 토큰이 있으면 수전, 없으면 생성
-        refreshTokenRepository.findByUserId(userId)
-                        .ifPresentOrElse(
-                                (tokenEntity)->tokenEntity.changeToken(refreshToken),
-                                ()->refreshTokenRepository.save(RefreshToken.createToken(userId, refreshToken))
-                        );
+        // 기존 토큰이 있으면 수정, 없으면 생성
+        refreshRedisRepository.save(token);
 
         // accessToken과 refreshToken 리턴
         return TokenResponseDto.builder()
@@ -83,6 +77,7 @@ public class LoginService {
     @Transactional
     public TokenResponseDto reissueAccessToken(String token) {
 
+        //token 앞에 "Bearer-" 제거
         String resolveToken = resolveToken(token);
 
         //토큰 검증 메서드
@@ -91,17 +86,17 @@ public class LoginService {
 
         Authentication authentication = jwtTokenProvider.getAuthentication(resolveToken);
         // 디비에 있는게 맞는지 확인
-        RefreshToken findTokenEntity = refreshTokenRepository.findByUserId(authentication.getName())
-                .orElseThrow(()-> new RuntimeException("not find refresh Token"));
+        RefreshRedisToken refreshRedisToken = refreshRedisRepository.findById(authentication.getName()).get();
 
         // 토큰이 같은지 확인
-        if(!resolveToken.equals(findTokenEntity.getToken())){
+        if(!resolveToken.equals(refreshRedisToken.getToken())){
             throw new RuntimeException("not equals refresh token");
         }
 
         // 재발행해서 저장
         String newToken = jwtTokenProvider.createRefreshToken(authentication);
-        findTokenEntity.changeToken(newToken);
+        RefreshRedisToken newRedisToken = RefreshRedisToken.createToken(authentication.getName(), newToken);
+        refreshRedisRepository.save(newRedisToken);
 
         // accessToken과 refreshToken 모두 재발행
         return TokenResponseDto.builder()

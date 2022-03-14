@@ -23,33 +23,33 @@ class RefreshRedisRepositoryTest {
     @Test
     void 기본_등록_조회기능() {
         String id = "dyparkkk";
-        RefreshToken token = RefreshToken.builder()
-                .id(id)
+        RefreshRedisToken token = RefreshRedisToken.builder()
+                .userId(id)
                 .token("token")
                 .build();
 
         // when
         refreshRedisRepository.save(token);
 
-        RefreshToken findToken = refreshRedisRepository.findById(id).get();
+        RefreshRedisToken findToken = refreshRedisRepository.findById(id).get();
         assertThat(findToken.getToken()).isEqualTo("token");
     }
 
     @Test
     void 수정기능() {
         String id = "dyparkkk";
-        refreshRedisRepository.save(RefreshToken.builder()
-               .id(id)
+        refreshRedisRepository.save(RefreshRedisToken.builder()
+               .userId(id)
                .token("token")
                .build());
 
         //when
-        RefreshToken findToken = refreshRedisRepository.findById(id).get();
+        RefreshRedisToken findToken = refreshRedisRepository.findById(id).get();
         findToken.reissue("new_token");
         refreshRedisRepository.save(findToken);
 
         //then
-        RefreshToken refreshToken = refreshRedisRepository.findById(id).get();
+        RefreshRedisToken refreshToken = refreshRedisRepository.findById(id).get();
         assertThat(refreshToken.getToken()).isEqualTo("new_token");
     }
 

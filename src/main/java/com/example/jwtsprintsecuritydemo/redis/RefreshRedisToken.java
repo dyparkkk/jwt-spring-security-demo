@@ -7,15 +7,19 @@ import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @RedisHash("RefreshToken")
-public class RefreshToken {
+public class RefreshRedisToken {
     @Id
-    private String id;
+    private String userId;
     private String token;
 
     @Builder
-    public RefreshToken(String id, String token) {
-        this.id = id;
+    private RefreshRedisToken(String userId, String token) {
+        this.userId = userId;
         this.token = token;
+    }
+
+    static public RefreshRedisToken createToken(String userId, String token){
+        return new RefreshRedisToken(userId, token);
     }
 
     public void reissue(String token) {

@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.example.jwtsprintsecuritydemo.security.jwt.JwtTokenProvider.*;
-
 @Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
 
@@ -56,4 +54,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
+
 }

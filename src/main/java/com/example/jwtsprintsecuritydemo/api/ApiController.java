@@ -1,6 +1,6 @@
 package com.example.jwtsprintsecuritydemo.api;
 
-import com.example.jwtsprintsecuritydemo.api.dto.SignInResponseDto;
+import com.example.jwtsprintsecuritydemo.api.dto.TokenResponseDto;
 import com.example.jwtsprintsecuritydemo.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +20,13 @@ public class ApiController {
     }
 
     @PostMapping("/api/v1/signIn")
-    public SignInResponseDto signInp(@RequestParam String id,
-                                     @RequestParam String pw) {
+    public TokenResponseDto signInp(@RequestParam String id,
+                                    @RequestParam String pw) {
         return loginService.signIn(id, pw);
+    }
+
+    @PostMapping("/api/v1/accessToken")
+    public TokenResponseDto reissueAccessToken(@RequestParam String token){
+       return loginService.reissueAccessToken(token);
     }
 }

@@ -1,13 +1,12 @@
 package com.example.jwtsprintsecuritydemo.api.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class SignInResponseDto {
+@Builder
+public class TokenResponseDto {
     private String accessToken;
     private String refreshToken;
 

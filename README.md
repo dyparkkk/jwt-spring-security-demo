@@ -1,4 +1,4 @@
-# Title
+# JWT using Spring Boot & Redis
 
 ![banner]()
 
@@ -7,7 +7,9 @@
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 
-This is a long description.
+> Spring Security와JWT를 사용해서 만든 유저 인증 서비스. 
+> 성능과 만료시간 설정 등의 편리함으로 인메모리 데이터 저장소인 redis를 간단하게 사용. 
+> 로컬 환경에서 간단하게 사용 가능
 
 ## Table of Contents
 
@@ -19,17 +21,32 @@ This is a long description.
 - [Contributing](#contributing)
 - [License](#license)
 
-## Security
+## 알아두기
 
-### Any optional sections
+```
+// build.gradle
+implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+```
+- Spring Data Redis
+  - Redis를 JPA Repository처럼 이용가능 하게 인터페이스를 제공해주는 모듈
+  - CrudRepository를 지원해서 좀 더 직관적으로 사용 가능
 
-## Background
+```
+implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+```
+- Embedded Redis
+  - 내장 Redis 데몬 -> 로컬 환경에서 추가 데몬 설치없이 사용 가능
 
-### Any optional sections
+
+## 기본 환경 구성 
+
+
+
+### 
 
 ## Install
 
-This module depends upon a knowledge of [Markdown]().
+Redis와 H2 저장소 모두 in-memory 환경에서 작동하기 때문에 따로 설치할 것은 없다.
 
 ```
 ```
@@ -39,6 +56,7 @@ This module depends upon a knowledge of [Markdown]().
 ## Usage
 
 ```
+./gradlew bootRun
 ```
 
 Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.

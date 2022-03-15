@@ -3,7 +3,7 @@
 ![banner]()
 
 ![badge]()
-[![license](https://img.shields.io/github/license/:user/:repo.svg)](https://github.com/dyparkkk/jwt-spring-security-demo/blob/main/LICENSE)
+[![license](https://img.shields.io/github/license/dyparkkk/jwt-spring-security-demo)](https://github.com/dyparkkk/jwt-spring-security-demo/blob/main/LICENSE)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 

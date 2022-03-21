@@ -11,7 +11,7 @@
 ## Table of Contents
 
 - [알아두기](#알아두기)
-- [기본 환경 구성 ](#기본환경구성)
+- [기본 환경 구성 ](#기본)
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)

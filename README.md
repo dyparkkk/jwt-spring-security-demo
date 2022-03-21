@@ -16,6 +16,8 @@
 - [Install](#Install)
 - [Usage](#Usage)
 - [API](#api)
+- [JWT 고찰](#JWT-고찰)
+- [참고자료](#참고자료)
 - [License](#license)
 
 ## 알아두기
@@ -89,7 +91,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 
-"~/api/" 로 시작하는 api는 항상 접근 가능하지만, "~/auth/" 로 시작하는 api는 권한이 있어야 접근 가능함 <br>
+"/api/**" 로 시작하는 api는 항상 접근 가능하지만, "/auth/**" 로 시작하는 api는 권한이 있어야 접근 가능함 <br>
 다시말해서 정상 jwt token이 있어야 접근 가능
 
 ### RedisConfig & RefreshRedisRepository
@@ -373,11 +375,11 @@ Redis와 H2 저장소 모두 in-memory 환경에서 작동하기 때문에 따�
 
 
 ## API
-```java
+```text
 localhost:8080/api/v1/signUp?id=test&pw=123
 ```
 id : test , pw : 123 으로 회원가입
-```java
+```text
 localhost:8080/api/v1/signIn?id=test&pw=123
 ```
 id : test , pw : 123 으로 로그인
@@ -408,6 +410,18 @@ public class ApiController {
 
 ```
  토큰 만료시 재발급 요청 컨트롤러
+
+## JWT 고찰
+[개인 블로그](https://velog.io/@dyparkkk/series/securityjwtredis)
+## 참고자료 
+[https://github.com/murraco/spring-boot-jwt](https://github.com/murraco/spring-boot-jwt) <br>
+[https://github.com/szerhusenBC/jwt-spring-security-demo](https://github.com/szerhusenBC/jwt-spring-security-demo) <br>
+https://budnamu.tistory.com/entry/JWT <br>
+https://kukekyakya.tistory.com/entry/Spring-boot-access-token-refresh-token-발급받기jwt <br>
+https://jojoldu.tistory.com/297
+
+
+
 
 ## License
 

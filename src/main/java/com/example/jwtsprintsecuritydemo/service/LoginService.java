@@ -2,11 +2,9 @@ package com.example.jwtsprintsecuritydemo.service;
 
 import com.example.jwtsprintsecuritydemo.api.dto.TokenResponseDto;
 import com.example.jwtsprintsecuritydemo.domain.Member;
-import com.example.jwtsprintsecuritydemo.domain.RefreshToken;
 import com.example.jwtsprintsecuritydemo.redis.RefreshRedisRepository;
 import com.example.jwtsprintsecuritydemo.redis.RefreshRedisToken;
 import com.example.jwtsprintsecuritydemo.repository.MemberRepository;
-import com.example.jwtsprintsecuritydemo.repository.RefreshTokenRepository;
 import com.example.jwtsprintsecuritydemo.security.MyUserDetailsService;
 import com.example.jwtsprintsecuritydemo.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +37,7 @@ public class LoginService {
         return memberRepository.save(Member.testCreate(userId, encodePw)).getId();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public TokenResponseDto signIn(String userId, String pw) {
         // uesrId 확인
         UserDetails userDetails = myUserDetailsService.loadUserByUsername(userId);
@@ -74,7 +72,7 @@ public class LoginService {
                 });
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public TokenResponseDto reissueAccessToken(String token) {
 
         //token 앞에 "Bearer-" 제거
@@ -104,7 +102,6 @@ public class LoginService {
                 .refreshToken("Bearer-"+newToken)
                 .build();
     }
-
 
     //token 앞에 "Bearer-" 제거
     private String resolveToken(String token){

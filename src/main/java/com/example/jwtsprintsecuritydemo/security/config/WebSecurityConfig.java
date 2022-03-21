@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) // 이게 뭐임?
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -30,28 +30,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-//                .antMatchers(HttpMethod.OPTIONS, "/**") // 이게 뭐임?
-                .antMatchers(
-                        "/",
-                        "/*.html",
-                        "/favicon.ico",
-                        "/h2-console/**"
-                );
+                .antMatchers("/", "/*.html", "/favicon.ico", "/h2-console/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-
                 //session 사용 안함
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
-
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 인증 실패시 오류 처리
+                .accessDeniedHandler(jwtAccessDeniedHandler)  // 권한 부족시 오류 처리
 
                 .and()
                 .authorizeRequests()
@@ -60,18 +52,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()
 
                 .and()
-                .apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
-
+                .apply(new JwtTokenFilterConfigurer(jwtTokenProvider)); // JWT 관련 필터 추가
     }
 
+    // 비밀번호 암호와 객체 빈 추가
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
+    @Bean  // 인증 실패 처리 관련 객체 추가
+    @Override public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 }

@@ -25,8 +25,14 @@ public class ApiController {
         return loginService.signIn(id, pw);
     }
 
+    /**
+     * Access token이 만료되었을 경우 프론트에서 요청할 api
+     * @param token : Refresh token을 입력받는다.
+     * @return TokenResponseDto : Access token과 Refresh token 모두 재발급해준다.
+     */
     @PostMapping("/api/v1/accessToken")
     public TokenResponseDto reissueAccessToken(@RequestParam String token){
        return loginService.reissueAccessToken(token);
     }
 }
+

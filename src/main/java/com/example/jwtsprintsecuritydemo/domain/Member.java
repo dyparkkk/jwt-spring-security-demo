@@ -39,7 +39,7 @@ public class Member {
     public Member(String userId, String pw) {
         this.userId = userId;
         this.pw = pw;
-        this.roles = "ROLE_USER";
+        this.roles = "ROLE_USER"; 
     }
 
     public static Member testCreate(String userId, String pw) {

@@ -17,7 +17,6 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String REFRESH_HEADER = "Refresh";
 
     private JwtTokenProvider jwtTokenProvider;
 
@@ -25,7 +24,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-
+    /**
+     * JWT를 검증하는 필터
+     * HttpServletRequest 의 Authorization 헤더에서 JWT token을 찾고 그것이 맞는지 확인
+     * UsernamePasswordAuthenticationFilter 앞에서 작동
+     * (JwtTokenFilterConfigurer 참고)
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = resolveToken(request, AUTHORIZATION_HEADER);
@@ -38,10 +42,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
         } catch(ExpiredJwtException e){
             request.setAttribute("exception", e);
-            log.info("ExpiredJwtException {}", e.getMessage());
+            log.info("ExpiredJwtException : {}", e.getMessage());
         } catch(JwtException | IllegalArgumentException e){
             request.setAttribute("exception", e);
-            log.info("jwtException {}", e.getMessage());
+            log.info("jwtException : {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);
@@ -54,6 +58,4 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
-
 }

@@ -1,7 +1,5 @@
 package com.example.jwtsprintsecuritydemo.security.jwt;
 
-import com.example.jwtsprintsecuritydemo.domain.RefreshToken;
-import com.example.jwtsprintsecuritydemo.repository.RefreshTokenRepository;
 import com.example.jwtsprintsecuritydemo.security.MyUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -11,9 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.util.*;
@@ -23,7 +19,6 @@ import java.util.*;
 public class JwtTokenProvider implements InitializingBean {
 
     private final MyUserDetailsService myUserDetailsService;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     private final String secretKey;
     private final long tokenValidityInMs;
@@ -32,13 +27,11 @@ public class JwtTokenProvider implements InitializingBean {
     public JwtTokenProvider(@Value("${jwt.secret-key}") String secretKey,
                             @Value("${jwt.token-validity-in-sec}") long tokenValidity,
                             @Value("${jwt.refresh-token-validity-in-sec}") long refreshTokenValidity,
-                            MyUserDetailsService myUserDetailsService,
-                            RefreshTokenRepository refreshTokenRepository){
+                            MyUserDetailsService myUserDetailsService){
         this.secretKey = secretKey;
         this.tokenValidityInMs = tokenValidity * 1000;
         this.refreshTokenValidityInMs = refreshTokenValidity * 1000;
         this.myUserDetailsService = myUserDetailsService;
-        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     private Key key;
@@ -62,6 +55,14 @@ public class JwtTokenProvider implements InitializingBean {
                 .compact();
     }
 
+    /**
+     * 토큰으로 부터 Authentication 객체를 얻어온다.
+     * Authentication 안에 user의 정보가 담겨있음.
+     * UsernamePasswordAuthenticationToken 객체로 Authentication을 쉽게 만들수 있으며,
+     * 매게변수로 UserDetails, pw, authorities 까지 넣어주면
+     * setAuthenticated(true)로 인스턴스를 생성해주고
+     * Spring-Security는 그것을 체크해서 로그인을 처리함
+     */
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -73,6 +74,7 @@ public class JwtTokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
+    // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -81,7 +83,6 @@ public class JwtTokenProvider implements InitializingBean {
             // 만료된 경우에는 refresh token을 확인하기 위해
             throw e;
         } catch (JwtException | IllegalArgumentException e) {
-            log.info("jwtException : {}", e);
             throw e;
         }
     }
@@ -97,5 +98,4 @@ public class JwtTokenProvider implements InitializingBean {
                 .setExpiration(validity)
                 .compact();
     }
-
 }

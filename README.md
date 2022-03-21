@@ -89,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 
-"~/api/" 로 시작하는 api는 항상 접근 가능하지만, "~/auth/" 로 시작하는 api는 권한이 있어야 접근 가능함 <br>
+"/api/" 로 시작하는 api는 항상 접근 가능하지만, "/auth/" 로 시작하는 api는 권한이 있어야 접근 가능함 <br>
 다시말해서 정상 jwt token이 있어야 접근 가능
 
 ### RedisConfig & RefreshRedisRepository

@@ -11,11 +11,11 @@
 ## Table of Contents
 
 - [알아두기](#알아두기)
-- [기본 환경 구성 ](#기본환경구성)
-- [Install](#install)
-- [Usage](#usage)
+- [기본 환경 구성 ](#기본-환경-구성)
+- [주요 기능 객체 소개](#주요-기능-객체-소개)
+- [Install](#Install)
+- [Usage](#Usage)
 - [API](#api)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## 알아두기

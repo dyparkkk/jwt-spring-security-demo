@@ -1,4 +1,4 @@
-package com.example.jwtsprintsecuritydemo.security.config;
+package com.example.jwtsprintsecuritydemo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
